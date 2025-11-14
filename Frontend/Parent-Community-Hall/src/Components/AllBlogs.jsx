@@ -35,6 +35,32 @@ const AllBlogs = ({blogs,filterBy,setFilterBy,server,comments,setComments}) => {
 
   }
 
+  const calculateTime = (cDate)=>{
+     let diffTime = Date.now() - new Date(cDate).getTime()
+     let timeStr = ""
+
+     let sec = diffTime/1000
+     
+      if(sec<60)
+        return `${Math.floor(sec)} sec ago`
+      let min = sec/60
+        if(min<60)
+        return `${Math.floor(min)} min ago`
+      let hr = min/60
+         if(hr<24)
+        return `${Math.floor(hr)} hour ago`
+      let days = hr/24
+        if(days<30)
+        return `${Math.floor(days)} days ago`
+      let month = days/30
+       if(month<12)
+        return `${Math.floor(sec)} months ago`
+       let year = month/12
+        return `${Math.floor(year)} years ago`
+         
+
+  }
+
   return (
     <div className='h-[80%] w-full py-[1rem] px-[2rem] bg-[rgba(242,242,242,.1)]'>
       <h2 className='text-white mb-2'><span className='text-xl font-medium'>All Posts in order : </span> <FilterPosts filterBy={filterBy} setFilterBy={setFilterBy}/></h2>
@@ -46,6 +72,7 @@ const AllBlogs = ({blogs,filterBy,setFilterBy,server,comments,setComments}) => {
                 <div className="header flex items-center border-b border-gray-200 pb-2">
                   <img src="" className='bg-black h-[3rem] w-[3rem] rounded-full' alt="" />
                   <span className='ml-[1rem] text-xl font-medium'>{tweet.author}</span>
+                  <pre>   {calculateTime(tweet.createdAt)}</pre>
                 </div> 
                 <div className="tweetContent pb-2 text-[1.1rem] px-3 flex-grow overflow-auto max-w-[54rem]">
                   {tweet.message}
