@@ -3,6 +3,11 @@ import cloudinary from "./Cloudinary.setup.js";
 import fs from "fs"
 import { io } from "../index.js";
 import { candidates } from "./Socket.setup.js";
+import { log } from "console";
+import jwt from "jsonwebtoken"
+import { config } from "dotenv";
+
+config()
 
 let uploadToCloudinary =(filePath)=>{
       return new Promise((resolve,reject)=>{
@@ -18,9 +23,15 @@ let uploadToCloudinary =(filePath)=>{
       })
 }
 
+const signToken =  (name)=>{
+    let token = jwt.sign({name},process.env.PRIVATE_KEY,{expiresIn:'30d'})
+    return token
+}
+
 const handlePost = async (req,res)=>{
 
     let publicId = null
+    let secure_url
 
     try{
     let {author,message} = req.body
@@ -38,11 +49,14 @@ const handlePost = async (req,res)=>{
         })
 
         publicId = uploadStream.public_id
+
+        secure_url = uploadStream.secure_url
     }
 
-    const newPost = new postModel({author,message,picPath:file})
+    const newPost = new postModel({author,message,picPath:secure_url})
 
     await newPost.save()
+    
 
     candidates.forEach(id=>(
         io.to(id).emit("newPost",newPost)
@@ -67,8 +81,15 @@ const handlePost = async (req,res)=>{
 const handleGet = async (req,res)=>{
 
     try{
-    const allPosts = await postModel.find({},{comments:0}).sort({createdAt:-1})
-    console.log(allPosts);
+        let filterBy = req.params.filterBy
+        
+        let allPosts
+        if(filterBy === "DateAsc")
+        allPosts = await postModel.find({},{comments:0}).sort({createdAt:-1})
+        else if(filterBy === "DateDsc")
+        allPosts = await postModel.find({},{comments:0})
+        else if(filterBy === "Likes")
+        allPosts = await postModel.find({},{comments:0}).sort({likes:-1})
     
     return res.status(200).json({allPosts})
     }
@@ -85,6 +106,8 @@ const handleGetComments = async (req,res)=>{
 
         let comments = await postModel.findById(postId,{comments:1,_id:0})
 
+        
+
         return res.status(200).json({comments})
         
     } catch (error) {
@@ -100,7 +123,6 @@ const handlePostComments = async (req,res)=>{
 
         let updatedDoc = await postModel.findByIdAndUpdate(postId,{$push:{comments:{author,text}},$inc:{commentCount:1}},{new:true})
 
-        console.log(updatedDoc);
 
         candidates.forEach(id=>(
             io.to(id).emit("incrComment",updatedDoc._id,updatedDoc.commentCount,{author,text})
@@ -108,7 +130,7 @@ const handlePostComments = async (req,res)=>{
 
 
 
-        return res.status(200).json({updatedDoc})
+        return res.status(200).json({updatedDoc,message:"new comment added!"})
         
     } catch (error) {
         return res.status(500).json({message:"error finding comments"})
@@ -118,21 +140,42 @@ const handlePostComments = async (req,res)=>{
 const handleLike = async (req,res)=>{
     try {
         let postId = req.params.id
-        console.log(postId);
+        let {token} = req.body
         
-        let updatedDoc = await postModel.findByIdAndUpdate(postId,{$inc:{likes:1}},{new:true})
-
+        let updatedDoc = await postModel.findByIdAndUpdate(postId,{$inc:{likes:1},$push:{likedBy:token}},{new:true})
+       
         candidates.forEach(id=>(
-            io.to(id).emit("incrLike",updatedDoc._id,updatedDoc.likes)
+            io.to(id).emit("incrLike",updatedDoc._id,updatedDoc.likes,token)
         ))
 
-        return res.status(200).json({updatedDoc})
+        return res.status(200).json({updatedDoc,message:"Liked!"})
         
     } catch (error) {
         return res.status(500).json({message:"error giving like to that post"})
     }
 }
 
+const setName = async (req,res)=>{
+
+    try{
+    let {name} = req.body
+
+    let token = signToken(name)
+
+    console.log(token);
+    
+
+    res.status(200).json({token,name,message:"new name set successfully!"})
+
+    }
+    catch(e){
+        console.log(e);
+        
+        res.status(500).json({message:"some error occured"})
+    }
 
 
-export {handlePost,handleGet,handleGetComments,handlePostComments,handleLike}
+}
+
+
+export {handlePost,handleGet,handleGetComments,handlePostComments,handleLike,setName}

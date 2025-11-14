@@ -1,4 +1,4 @@
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 
 const candidates = new Set()
 
@@ -6,7 +6,7 @@ const wsServer = (server)=>{
     const io =new Server(server,{
         cors:{
             origin:"*",
-            methods:['GET','POST'],
+            methods:['GET','POST','PUT','DELETE'],
             allowedHeaders:"*",
             credentials:true
         }

@@ -1,9 +1,15 @@
 import multer from "multer"
+import {join,dirname} from "path"
+import { fileURLToPath } from "url"
+
+const __filename = fileURLToPath(import.meta.url)
+
+const __dirname = dirname(__filename)
 
 let storage = multer.diskStorage({
     destination : (req,file,cb)=>{
        
-        dest = "../Assets"
+        const dest =  join(__dirname,"../Assets")
 
         cb(null,dest)
 
@@ -13,7 +19,7 @@ let storage = multer.diskStorage({
 
         let extention = file.originalname.split('.').pop()
 
-        let name = file.fieldname + "-" + Date.now() + "-" + extention
+        let name = file.fieldname + "-" + Date.now() + "." + extention
         
         cb(null,name)
 
