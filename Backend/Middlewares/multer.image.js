@@ -1,17 +1,27 @@
 import multer from "multer"
 import {join,dirname} from "path"
 import { fileURLToPath } from "url"
+import fs from "fs"
 
 const __filename = fileURLToPath(import.meta.url)
 
 const __dirname = dirname(__filename)
 
 let storage = multer.diskStorage({
-    destination : (req,file,cb)=>{
+    destination : async (req,file,cb)=>{
        
         const dest =  join(__dirname,"../Assets")
+      try{
+        if(!fs.existsSync(dest))
+        await fs.promises.mkdir(dest,{recursive:true})
 
         cb(null,dest)
+      }
+
+      catch(err){
+
+        cb(err)
+      }
 
     },
 
