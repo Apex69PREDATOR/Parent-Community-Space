@@ -95,8 +95,6 @@ function App() {
 
   useEffect(()=>{
        commentRef.current=comments
-
-       console.log('cmt',comments);
        
      },[comments])
 
