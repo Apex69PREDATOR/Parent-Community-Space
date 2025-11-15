@@ -167,8 +167,6 @@ const setName = async (req,res)=>{
     let {name} = req.body
 
     let token = signToken(name)
-
-    console.log(token);
     
 
     res.status(200).json({token,name,message:"new name set successfully!"})
