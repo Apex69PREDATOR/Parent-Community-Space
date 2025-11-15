@@ -22,7 +22,7 @@ const SetName = ({server,setAskName,displayName}) => {
 
   }
   return (
-    <div className='p-[7rem] bg-white shadow-2xl rounded-md flex flex-col gap-8 absolute top-[15%] left-[33%] z-2'>
+    <div className='md:p-[7rem] p-[5.5rem] bg-white shadow-2xl rounded-md flex flex-col md:gap-8 gap-12 absolute md:top-[15%] top-[20%] md:left-[33%] z-2 bg-gradient-to-br from-blue-200 via-white to-indigo-300'>
 
         <CloseOutlined className="top-[2%] right-[2%] absolute cursor-pointer" sx={{fontSize:'2rem'}} onClick={()=>setAskName(false)}/>
 

@@ -2,11 +2,12 @@ import { useRef, useState } from 'react'
 import { TextField, Button, IconButton,  Typography } from '@mui/material'
 import { CloseOutlined,  Image, Send } from '@mui/icons-material'
 
-const PostForm = ({ server, showPostForm }) => {
+const PostForm = ({ server, showPostForm, setName }) => {
     const inputTag = useRef()
     const [image, setImage] = useState(null)
     const [tweet, setTweet] = useState('')
     const [loading,setLoading] = useState(false)
+    const [wroteName,setWroteName] = useState(null)
     const name = localStorage.getItem('parentName')
 
     const handleSubmit = async (e) => {
@@ -19,8 +20,9 @@ const PostForm = ({ server, showPostForm }) => {
 
         try {
             let formData = new FormData()
-            formData.append("author", name)
+            formData.append("author", (name || wroteName))
             formData.append("message", tweet)
+            formData.append("manualName",(name?false:true))
             if (image)
                 formData.append("postPic", image)
 
@@ -36,6 +38,11 @@ const PostForm = ({ server, showPostForm }) => {
                 setImage(null)
                 setTweet('')
                 showPostForm(false)
+                if(response.data.token){
+                    localStorage.setItem("pchToken",response.data.token)
+                    localStorage.setItem("parentName",wroteName)
+                    setName(wroteName)
+                }
             }
         } catch (error) {
             console.error('Error:', error)
@@ -70,13 +77,14 @@ const PostForm = ({ server, showPostForm }) => {
                     variant="outlined"
                     fullWidth
                     size="small"
-                    disabled
+                    disabled ={name!==null}
                     className="bg-white/80 rounded-lg"
                     sx={{
                         '& .MuiOutlinedInput-root': {
                             borderRadius: '12px',
                         }
                     }}
+                    onChange={(e)=>setWroteName(e.target.value)}
                 />
 
                 {/* Tweet Textarea */}
@@ -147,7 +155,7 @@ const PostForm = ({ server, showPostForm }) => {
                 <Button 
                     variant="contained" 
                     type="submit"
-                    disabled={!tweet.trim()}
+                    disabled={!tweet.trim() || loading}
                     className="w-full py-3 rounded-xl font-semibold text-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     startIcon={<Send />}
                 >

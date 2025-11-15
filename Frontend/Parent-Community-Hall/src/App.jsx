@@ -10,7 +10,7 @@ import PostForm from './Components/PostForm'
 function App() {
 
   const [name,setName] = useState(localStorage.getItem('parentName'))
-  const [allPosts,setAllPosts] = useState([])
+  const [allPosts,setAllPosts] = useState(null)
   const [filterBy,setFilterBy] = useState('DateAsc')
   let [askName,setAskName] = useState(false)
   const [comments,setComments] = useState({})
@@ -103,12 +103,17 @@ function App() {
   return (
     <>
       <main className='h-[100vh] w-[100vw] flex flex-col gap-[1rem] relative' style={{backgroundImage:'url(/background.png)', backgroundRepeat:'no-repeat',backgroundSize:'100% 100%'}}>
+    
       {(askName || postForm) &&<div className="sheet absolute bg-[rgba(0,0,0,.4)] z-1 h-full w-full"></div>}
         <Navbar name={name} filterBy={filterBy} setFilterBy={setFilterBy} setAskName={setAskName} showPostForm={showPostForm}/>
-        <AllBlogs blogs={allPosts} filterBy={filterBy} setFilterBy={setFilterBy} server={server} comments={comments} setComments={setComments}/>
+        {
+          allPosts?
+        <AllBlogs blogs={allPosts} filterBy={filterBy} setFilterBy={setFilterBy} server={server} comments={comments} setComments={setComments}/>:<div className='relative top-[30%] left-[46%] b w-[12%] text-center'><div className="loader"></div>
+        <p className='text-white text-2xl'><span className='text-orange-500'>Fetching</span> Posts...</p>
+        </div>}
         {askName && <SetName displayName={setName} server={server} setAskName={setAskName}/>}
-        {postForm && <PostForm server={server} showPostForm={showPostForm}/>}
-
+        {postForm && <PostForm server={server} showPostForm={showPostForm} setName={setName}/>}
+       
       </main>
     </>
   )

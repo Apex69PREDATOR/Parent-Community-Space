@@ -62,17 +62,17 @@ const AllBlogs = ({blogs,filterBy,setFilterBy,server,comments,setComments}) => {
   }
 
   return (
-    <div className='h-[80%] w-full py-[1rem] px-[2rem] bg-[rgba(242,242,242,.1)]'>
-      <h2 className='text-white mb-2'><span className='text-xl font-medium'>All Posts in order : </span> <FilterPosts filterBy={filterBy} setFilterBy={setFilterBy}/></h2>
+    <div className='md:h-[80%] h-[90%] w-full py-[1rem] px-[2rem] bg-[rgba(242,242,242,.1)]'>
+      <h2 className='text-white md:mb-2 mb-3'><span className='text-xl font-medium'>All Posts in order : </span> <FilterPosts filterBy={filterBy} setFilterBy={setFilterBy}/></h2>
       <div className='h-[90%] w-full text-black flex flex-col items-center overflow-auto gap-[1rem]'>
         {blogs?.map(tweet=>(
-            <div className='bg-white w-[60%] flex flex-col p-2 rounded-md shadow-md' id={tweet._id} key={tweet._id}>
+            <div className='bg-white md:w-[60%] w-[95%] flex flex-col p-2 rounded-md shadow-md' id={tweet._id} key={tweet._id}>
               {/* Tweet Content */}
               <div className="flex flex-col gap-[1rem] flex-grow">
                 <div className="header flex items-center border-b border-gray-200 pb-2">
                   <img src="" className='bg-black h-[3rem] w-[3rem] rounded-full' alt="" />
                   <span className='ml-[1rem] text-xl font-medium'>{tweet.author}</span>
-                  <pre>   {calculateTime(tweet.createdAt)}</pre>
+                  <pre className='text-sm text-gray-500'>   {calculateTime(tweet.createdAt)}</pre>
                 </div> 
                 <div className="tweetContent pb-2 text-[1.1rem] px-3 flex-grow overflow-auto max-w-[54rem]">
                   {tweet.message}
@@ -90,9 +90,9 @@ const AllBlogs = ({blogs,filterBy,setFilterBy,server,comments,setComments}) => {
               {showComments.includes(tweet._id) && (
                 <div className='w-full mt-2 border-t border-gray-200 pt-2'>
                   <h3 className='text-xl font-medium mb-3'>Comments</h3>
-                  <div className='max-h-[250px] overflow-y-auto flex flex-col gap-2'>
+                  <div className='max-h-[250px] overflow-y-auto flex items-center flex-col gap-2'>
                     {comments[tweet._id]?.map(val=>(
-                      <div key={val._id} className='p-1 px-2 flex flex-col gap-1 bg-gray-100 rounded-xl'>
+                      <div key={val._id} className='p-1 px-2 flex flex-col gap-1 bg-gray-100 rounded-xl w-[85%]'>
                         <span className='font-medium'>{val.author}</span>
                         <span>{val.text}</span>
                       </div>

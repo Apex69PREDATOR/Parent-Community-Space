@@ -18,8 +18,6 @@ const wsServer = (server)=>{
 
     io.on("connection",(Socket)=>{
 
-        console.log('new socket client',Socket.id);
-
         candidates.add(Socket.id)
 
         Socket.on("disconnect",()=>{

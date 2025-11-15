@@ -34,9 +34,15 @@ const handlePost = async (req,res)=>{
     let secure_url
 
     try{
-    let {author,message} = req.body
+    let {author,message,manualName} = req.body
 
     let file = req?.file?.path
+
+    let token = null
+
+    if(manualName){
+        token = signToken(manualName)
+    }
 
     if(file){
         let uploadStream = await uploadToCloudinary(file)
@@ -62,7 +68,7 @@ const handlePost = async (req,res)=>{
         io.to(id).emit("newPost",newPost)
     ))
 
-    return res.status(200).json({message:"New Post posted successfully"})
+    return res.status(200).json({message:"New Post posted successfully",token})
     }
     catch(e){
 
