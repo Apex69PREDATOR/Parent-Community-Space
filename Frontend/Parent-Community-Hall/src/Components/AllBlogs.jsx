@@ -66,7 +66,7 @@ const AllBlogs = ({blogs,filterBy,setFilterBy,server,comments,setComments}) => {
       <h2 className='text-white md:mb-2 mb-3'><span className='text-xl font-medium'>All Posts in order : </span> <FilterPosts filterBy={filterBy} setFilterBy={setFilterBy}/></h2>
       <div className='h-[90%] w-full text-black flex flex-col items-center overflow-auto gap-[1rem]'>
         {blogs?.map(tweet=>(
-            <div className='bg-white md:w-[60%] w-[95%] flex flex-col p-2 rounded-md shadow-md' id={tweet._id} key={tweet._id}>
+            <div className='bg-white md:w-[60%] w-[100%] flex flex-col p-2 rounded-md shadow-md' id={tweet._id} key={tweet._id}>
               {/* Tweet Content */}
               <div className="flex flex-col gap-[1rem] flex-grow">
                 <div className="header flex items-center border-b border-gray-200 pb-2">
@@ -77,7 +77,7 @@ const AllBlogs = ({blogs,filterBy,setFilterBy,server,comments,setComments}) => {
                 <div className="tweetContent pb-2 text-[1.1rem] px-3 flex-grow overflow-auto max-w-[54rem]">
                   {tweet.message}
                 </div>
-                {tweet?.picPath && <img className='md:max-h-[300px] max-h-[200px] object-contain md:max-w-[500px] max-w-[300px] rounded-xl shadow-md' src={tweet.picPath} alt="tweet"/>}
+                {tweet?.picPath && <img className='max-h-[300px] object-contain md:max-w-[500px] max-w-[300px] rounded-xl shadow-md' src={tweet.picPath} alt="tweet"/>}
                 
                 {/* Utilities */}
                 <div className="utilities w-full flex justify-evenly p-1 text-gray-500 bg-white border-t border-gray-200">
